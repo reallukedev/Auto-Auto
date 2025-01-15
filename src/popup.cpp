@@ -4,7 +4,15 @@
 
 using namespace geode::prelude;
 
+MyPopup *currentPopup = nullptr;
+
 bool MyPopup::setup(bool loading, std::string labelText) {
+	if (currentPopup) {
+		currentPopup->closeWithoutPopup();
+	}
+
+	currentPopup = this;
+
 	this->setTitle("Auto Auto");
 
 	auto m_listMenu = CCMenu::create();
@@ -113,4 +121,8 @@ void MyPopup::onClose(CCObject *) {
 	}
 }
 
-void MyPopup::closeWithoutPopup() { Popup::onClose(nullptr); }
+void MyPopup::closeWithoutPopup() {
+	currentPopup = nullptr;
+
+	Popup::onClose(nullptr);
+}

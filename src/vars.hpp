@@ -6,4 +6,4 @@ extern std::list<int> sfxToDownload;
 
 extern bool autoModeEnabled;
 
-extern GJGameLevel *currentLevel;
+extern GJGameLevel *currentAutoLevel;

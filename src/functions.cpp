@@ -5,22 +5,24 @@
 using namespace geode::prelude;
 
 void playLevel(int levelId) {
-	log::info("Downloading level {}", levelId);
+	if (autoModeEnabled) {
+		log::info("Downloading level {}", levelId);
 
-	MyPopup::create(true, "Downloading level " + std::to_string(levelId))
-		->show();
+		MyPopup::create(true, "Downloading level " + std::to_string(levelId))
+			->show();
 
-	log::info("Popup Created");
+		log::info("Popup Created");
 
-	auto glm = GameLevelManager::get();
+		auto glm = GameLevelManager::get();
 
-	glm->m_levelDownloadDelegate = new MyLevelDownloadDelegate();
+		glm->m_levelDownloadDelegate = new MyLevelDownloadDelegate();
 
-	log::info("Delegate Assigned");
+		log::info("Delegate Assigned");
 
-	glm->downloadLevel(levelId, false);
+		glm->downloadLevel(levelId, false);
 
-	log::info("Level Downloaded");
+		log::info("Level Downloaded");
+	}
 };
 
 void getNextList() {
@@ -49,22 +51,62 @@ void getNextList() {
 
 	// log::info("Levels Fetched");
 
-	levelIds = {110236560};
+	levelIds = {113873694};
 };
 
 void playNextLevel() {
-	if (!autoModeEnabled) {
-		return;
+	if (autoModeEnabled) {
+		if (levelIds.empty()) {
+			getNextList();
+			return;
+		}
+
+		auto levelId = levelIds.front();
+
+		playLevel(levelId);
+
+		levelIds.pop_front();
 	}
-
-	if (levelIds.empty()) {
-		getNextList();
-		return;
-	}
-
-	auto levelId = levelIds.front();
-
-	playLevel(levelId);
-
-	levelIds.pop_front();
 };
+
+void playCurrentLevel() {
+	log::info("Playing {}", currentAutoLevel);
+
+	if (autoModeEnabled) {
+		if (currentAutoLevel) {
+			auto layer = PlayLayer::create(currentAutoLevel, false, false);
+			auto scene = CCScene::create();
+			scene->addChild(layer);
+
+			cocos2d::CCDirector::sharedDirector()->replaceScene(
+				CCTransitionFade::create(0.5f, scene));
+
+			layer->stopAllActions();
+			layer->startGame();
+			layer->resetLevelFromStart();
+		} else {
+			playNextLevel();
+		}
+	}
+}
+
+void downloadNextSongSfx() {
+	if (!songsToDownload.empty()) {
+		MusicDownloadManager::sharedState()->downloadSong(
+			songsToDownload.front());
+
+		MyPopup::create(true, "Downloading Song " +
+								  std::to_string(songsToDownload.front()))
+			->show();
+	} else if (!sfxToDownload.empty()) {
+		MusicDownloadManager::sharedState()->downloadSFX(sfxToDownload.front());
+
+		MyPopup::create(true, "Downloading SFX " +
+								  std::to_string(songsToDownload.front()))
+			->show();
+	} else {
+		log::info("All Songs and SFX Downloaded!");
+
+		playCurrentLevel();
+	}
+}

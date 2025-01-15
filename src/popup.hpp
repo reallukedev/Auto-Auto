@@ -13,3 +13,5 @@ class MyPopup : public geode::Popup<bool, std::string> {
 
 	void closeOpenPopup();
 };
+
+extern MyPopup *currentPopup;

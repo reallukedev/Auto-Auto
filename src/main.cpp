@@ -15,6 +15,9 @@ using namespace geode::prelude;
 
 std::list<int> levelIds = {};
 bool autoModeEnabled = false;
+std::list<int> songsToDownload = {};
+std::list<int> sfxToDownload = {};
+GJGameLevel *currentAutoLevel = nullptr;
 
 class $modify(MyEndLevelLayer, EndLevelLayer) {
 	void customSetup() {
@@ -158,33 +161,32 @@ class $modify(MyMusicDownloadManager, MusicDownloadManager) {
 								 cocos2d::extension::CCHttpResponse *p1) {
 		MusicDownloadManager::onDownloadSongCompleted(p0, p1);
 
-		log::info("Downloaded Song!");
+		auto songSfxID = atoi(p1->getHttpRequest()->getTag());
 
-		auto songID = atoi(p1->getHttpRequest()->getTag());
+		log::info("START Downloaded Song/SFX: {}", songSfxID);
 
-		log::info("Downloaded SongID: {}", songID);
+		if (autoModeEnabled) {
+			// auto songSfxID = atoi(p1->getHttpRequest()->getTag());
 
-		songsToDownload.remove(songID);
+			log::info("Downloaded Song/SFX: {}", songSfxID);
 
-		if (songsToDownload.empty()) {
-			log::info("All Songs Downloaded!");
+			if (std::find(sfxToDownload.begin(), sfxToDownload.end(),
+						  songSfxID) != sfxToDownload.end()) {
+				sfxToDownload.remove(songSfxID);
+			}
 
-			if (autoModeEnabled) {
-				playNextLevel();
+			if (std::find(songsToDownload.begin(), songsToDownload.end(),
+						  songSfxID) != songsToDownload.end()) {
+				songsToDownload.remove(songSfxID);
+			}
+
+			if (songsToDownload.empty() && sfxToDownload.empty()) {
+				log::info("All Songs and SFX Downloaded!");
+
+				playCurrentLevel();
+			} else {
+				downloadNextSongSfx();
 			}
 		}
-
-		// if (currentLevel) {
-		// 	auto layer = PlayLayer::create(currentLevel, false, false);
-		// 	auto scene = CCScene::create();
-		// 	scene->addChild(layer);
-
-		// 	cocos2d::CCDirector::sharedDirector()->replaceScene(
-		// 		CCTransitionFade::create(0.5f, scene));
-
-		// 	layer->stopAllActions();
-		// 	layer->startGame();
-		// 	layer->resetLevelFromStart();
-		// }
 	}
 };

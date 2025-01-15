@@ -1,8 +1,8 @@
 #include "delegates.hpp"
-#include "Geode/binding_arm/MusicDownloadManager.hpp"
 #include "Geode/utils/string.hpp"
 #include "functions.hpp"
 #include "vars.hpp"
+#include <Geode/modify/MusicDownloadManager.hpp>
 
 using namespace geode::prelude;
 
@@ -67,7 +67,7 @@ void MyLevelDownloadDelegate::levelDownloadFinished(GJGameLevel *level) {
 	delete this;
 
 	if (level) {
-		// currentLevel = level;
+		currentAutoLevel = typeinfo_cast<GJGameLevel *>(level);
 
 		auto songIDs = level->m_songIDs;
 		auto sfxIDs = level->m_sfxIDs;
@@ -75,26 +75,34 @@ void MyLevelDownloadDelegate::levelDownloadFinished(GJGameLevel *level) {
 		auto songIDSplit = string::split(songIDs, ",");
 		auto sfxIDSplit = string::split(sfxIDs, ",");
 
-		// for (auto &sfxID : sfxIDSplit) {
-		// 	sfxToDownload.push_back(std::stoi(sfxID));
-		// }
-
 		for (auto &songID : songIDSplit) {
 			auto songIDInt = std::stoi(songID);
 
 			if (!MusicDownloadManager::sharedState()->isSongDownloaded(
 					songIDInt)) {
 				songsToDownload.push_back(songIDInt);
-
-				MusicDownloadManager::sharedState()->downloadSong(songIDInt);
 			}
+
+			log::info("Found SongID: {}", songID);
 		}
 
+		for (auto &sfxID : sfxIDSplit) {
+			auto sfxIDInt = std::stoi(sfxID);
+
+			if (!MusicDownloadManager::sharedState()->isSFXDownloaded(
+					sfxIDInt)) {
+				sfxToDownload.push_back(sfxIDInt);
+
+				// MusicDownloadManager::sharedState()->downloadSFX(sfxIDInt);
+			}
+
+			log::info("Found SFX: {}", sfxID);
+		}
+
+		downloadNextSongSfx();
 	} else {
 		playNextLevel();
 	}
-
-	log::info("Level played!");
 }
 
 void MyLevelDownloadDelegate::levelDownloadFailed(int p0) {
