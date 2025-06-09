@@ -1,23 +1,23 @@
-# AutoAuto
-This is where she makes a mod.
+# Auto Auto
 
-<img src="logo.png" width="150" alt="the mod's logo" />
+> UNFINISHED ARCHIVE
 
-*Update logo.png to change your mod's icon (please)*
+## What is this?
 
-## Getting started
-We recommend heading over to [the getting started section on our docs](https://docs.geode-sdk.org/getting-started/) for useful info on what to do next.
+This unfinished mod automatically finds and plays auto levels in Geometry Dash. It actually works pretty well, but it is not finished yet. The code is also kind of messy.
 
-## Build instructions
-For more info, see [our docs](https://docs.geode-sdk.org/getting-started/create-mod#build)
-```sh
-# Assuming you have the Geode CLI set up already
-geode build
-```
+## Can I use this?
 
-# Resources
-* [Geode SDK Documentation](https://docs.geode-sdk.org/)
-* [Geode SDK Source Code](https://github.com/geode-sdk/geode/)
-* [Geode CLI](https://github.com/geode-sdk/cli)
-* [Bindings](https://github.com/geode-sdk/bindings/)
-* [Dev Tools](https://github.com/geode-sdk/DevTools)
+Yes, you can use this code for whatever you want. Just please, credit me if you use a part of it.
+
+## Why is your code so messy?
+
+It was 3am
+
+## Why are you releasing this unfinished mod?
+
+I decided to quit Geode Modding, so I am releasing all of my unfinished mods. This is one of them.
+
+## Other
+
+High Life 28 :3
